@@ -24,29 +24,31 @@
 
 int main(int argc, char* argv[])
 {
-	try {
-		std::stringstream ss;
-		std::ifstream trafficFile;
-		trafficFile.open("../traffic.json");
+	try
+    {
+        std::stringstream ss;
 		std::string line;
+		std::ifstream inFile;
+		inFile.open(std::string("../traffic.json").c_str());
+       	while(getline(inFile, line))
+        {           
+           ss << line << "\r\n";
+        }
 
-		while (getline(trafficFile, line)) {
-			ss << line << "\r\n";
-		}
-		
-		trafficFile.close();
-		boost::property_tree::ptree pt;
-		boost::property_tree::read_json(ss, pt);
+        boost::property_tree::ptree pt;
+        boost::property_tree::read_json(ss, pt);
 
-		BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child(""))
+        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child("0.1"))
         {
             assert(v.first.empty()); // array elements have no names
             std::cout << v.second.data() << std::endl;
-            // etc
         }
-
-	} catch (std::exception const& e) {
-		std::cerr << e.what() << std::endl;
-	}
+        return EXIT_SUCCESS;
+    }
+    catch (std::exception const& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+    return EXIT_FAILURE;
 	return 0;
 }

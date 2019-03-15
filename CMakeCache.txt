@@ -14,6 +14,18 @@
 # EXTERNAL cache entries
 ########################
 
+//Boost Boost library (debug)
+Boost_BOOST_LIBRARY_DEBUG:FILEPATH=Boost_BOOST_LIBRARY_DEBUG-NOTFOUND
+
+//Boost Boost library (release)
+Boost_BOOST_LIBRARY_RELEASE:FILEPATH=Boost_BOOST_LIBRARY_RELEASE-NOTFOUND
+
+//Boost boost_property_tree library (debug)
+Boost_BOOST_PROPERTY_TREE_LIBRARY_DEBUG:FILEPATH=Boost_BOOST_PROPERTY_TREE_LIBRARY_DEBUG-NOTFOUND
+
+//Boost boost_property_tree library (release)
+Boost_BOOST_PROPERTY_TREE_LIBRARY_RELEASE:FILEPATH=Boost_BOOST_PROPERTY_TREE_LIBRARY_RELEASE-NOTFOUND
+
 //Boost date_time library (debug)
 Boost_DATE_TIME_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libboost_date_time-mt.a
 
@@ -38,6 +50,12 @@ Boost_LIBRARY_DIR_DEBUG:PATH=/usr/local/lib
 //Boost library directory RELEASE
 Boost_LIBRARY_DIR_RELEASE:PATH=/usr/local/lib
 
+//Boost property_tree library (debug)
+Boost_PROPERTY_TREE_LIBRARY_DEBUG:FILEPATH=Boost_PROPERTY_TREE_LIBRARY_DEBUG-NOTFOUND
+
+//Boost property_tree library (release)
+Boost_PROPERTY_TREE_LIBRARY_RELEASE:FILEPATH=Boost_PROPERTY_TREE_LIBRARY_RELEASE-NOTFOUND
+
 //Boost system library (debug)
 Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libboost_system-mt.a
 
@@ -47,9 +65,8 @@ Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/usr/local/lib/libboost_system-mt.a
 //Path to a program.
 CMAKE_AR:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
 
-//Choose the type of build, options are: None Debug Release RelWithDebInfo
-// MinSizeRel ...
-CMAKE_BUILD_TYPE:STRING=
+//No help, variable specified on the command line.
+CMAKE_BUILD_TYPE:STRING=Debug
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
@@ -304,6 +321,14 @@ MPI_pmpi_LIBRARY:FILEPATH=/usr/local/Cellar/mpich/3.3/lib/libpmpi.dylib
 # INTERNAL cache entries
 ########################
 
+//ADVANCED property for variable: Boost_BOOST_LIBRARY_DEBUG
+Boost_BOOST_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_BOOST_LIBRARY_RELEASE
+Boost_BOOST_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_BOOST_PROPERTY_TREE_LIBRARY_DEBUG
+Boost_BOOST_PROPERTY_TREE_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_BOOST_PROPERTY_TREE_LIBRARY_RELEASE
+Boost_BOOST_PROPERTY_TREE_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_DATE_TIME_LIBRARY_DEBUG
 Boost_DATE_TIME_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_DATE_TIME_LIBRARY_RELEASE
@@ -320,6 +345,10 @@ Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
 Boost_LIBRARY_DIR_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_LIBRARY_DIR_RELEASE
 Boost_LIBRARY_DIR_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_PROPERTY_TREE_LIBRARY_DEBUG
+Boost_PROPERTY_TREE_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_PROPERTY_TREE_LIBRARY_RELEASE
+Boost_PROPERTY_TREE_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_SYSTEM_LIBRARY_DEBUG
 Boost_SYSTEM_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_SYSTEM_LIBRARY_RELEASE
@@ -514,7 +543,7 @@ MPI_mpicxx_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPI_pmpi_LIBRARY
 MPI_pmpi_LIBRARY-ADVANCED:INTERNAL=1
 //Components requested for this build tree.
-_Boost_COMPONENTS_SEARCHED:INTERNAL=date_time;filesystem;system
+_Boost_COMPONENTS_SEARCHED:INTERNAL=Boost;boost_property_tree;date_time;filesystem;property_tree;system
 //Last used Boost_INCLUDE_DIR value.
 _Boost_INCLUDE_DIR_LAST:INTERNAL=/usr/local/include
 //Last used Boost_LIBRARY_DIR_DEBUG value.

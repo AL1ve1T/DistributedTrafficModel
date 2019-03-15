@@ -79,7 +79,6 @@ DistributedTrafficModel_EXTERNAL_OBJECTS =
 
 build/debug/DistributedTrafficModel: src/CMakeFiles/DistributedTrafficModel.dir/DistributedTrafficModel.cpp.o
 build/debug/DistributedTrafficModel: src/CMakeFiles/DistributedTrafficModel.dir/build.make
-build/debug/DistributedTrafficModel: /usr/local/Cellar/boost/1.66.0/libs
 build/debug/DistributedTrafficModel: src/CMakeFiles/DistributedTrafficModel.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/AliveIT/DistributedTrafficModel/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable ../build/debug/DistributedTrafficModel"
 	cd /Users/AliveIT/DistributedTrafficModel/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/DistributedTrafficModel.dir/link.txt --verbose=$(VERBOSE)
