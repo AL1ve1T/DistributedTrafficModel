@@ -22,18 +22,17 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 
+#define PROJ_ROOT "/Users/AliveIT/DistributedTrafficModel"
+
 int main(int argc, char* argv[])
 {
 	try
     {
         std::stringstream ss;
-		std::string line;
-		std::ifstream inFile;
-		inFile.open(std::string("../traffic.json").c_str());
-       	while(getline(inFile, line))
-        {           
-           ss << line << "\r\n";
-        }
+		std::ifstream inFile("../traffic.json");
+        // Read file
+        std::string data(std::istreambuf_iterator<char>(), 
+            std::istreambuf_iterator<char>());
 
         boost::property_tree::ptree pt;
         boost::property_tree::read_json(ss, pt);
@@ -43,12 +42,10 @@ int main(int argc, char* argv[])
             assert(v.first.empty()); // array elements have no names
             std::cout << v.second.data() << std::endl;
         }
-        return EXIT_SUCCESS;
     }
     catch (std::exception const& e)
     {
         std::cerr << e.what() << std::endl;
     }
-    return EXIT_FAILURE;
 	return 0;
 }
