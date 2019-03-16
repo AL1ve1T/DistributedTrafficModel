@@ -4,7 +4,7 @@
 cmake_minimum_required (VERSION 3.2)
 
 # Add source to this project's executable.
-add_executable (DistributedTrafficModel "DistributedTrafficModel.cpp" "include/DistributedTrafficModel.h")
+add_executable (app.exe "DistributedTrafficModel.cpp" "include/DistributedTrafficModel.h")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/build/debug)
 
@@ -19,19 +19,10 @@ set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF) 
 
-find_package(Boost 1.68.0 COMPONENTS filesystem system)
-
 set(Boost_DEBUG ON)
 
-if(Boost_FOUND)
-    include_directories(${BOOST_SOURCE_DIR}/include)
-    link_libraries(${BOOST_SOURCE_DIR}/libs)
-
-	find_package(Boost)
-endif()
-
-# find_package(MPI REQUIRED)
-# include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-# target_link_libraries(DistributedTrafficModel PRIVATE ${MPI_C_LIBRARIES})
+find_package(Boost COMPONENTS program_options REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+target_link_libraries(app.exe ${Boost_LIBRARIES})
 
 # TODO: Add tests and install targets if needed.

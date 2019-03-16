@@ -1,6 +1,6 @@
 ﻿// DistributedTrafficModel.cpp : Defines the entry point for the application.
 //
-
+/////////////////////////////////////////////////////////////////////////////
 /*
 	This section describes common bussiness logic of 
 	this application.
@@ -14,6 +14,7 @@
 		}
 	}
 */
+/////////////////////////////////////////////////////////////////////////////
 
 #include "./include/DistributedTrafficModel.h"
 #include <iostream>
@@ -29,19 +30,20 @@ int main(int argc, char* argv[])
 	try
     {
         std::stringstream ss;
-		std::ifstream inFile("../traffic.json");
+        std::string path = PROJ_ROOT + std::string("/resource/traffic.json");
+		std::ifstream inFile(path);
         // Read file
-        std::string data(std::istreambuf_iterator<char>(), 
-            std::istreambuf_iterator<char>());
+        std::string data((std::istreambuf_iterator<char>(inFile)), 
+            (std::istreambuf_iterator<char>()));
+        ss << data;
 
         boost::property_tree::ptree pt;
         boost::property_tree::read_json(ss, pt);
-
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child("0.1"))
-        {
-            assert(v.first.empty()); // array elements have no names
-            std::cout << v.second.data() << std::endl;
-        }
+    }
+    catch (const boost::property_tree::json_parser::json_parser_error& e)
+    {
+        std::cerr << "Invalid JSON" << std::endl;
+        std::cerr << e.what() << std::endl;
     }
     catch (std::exception const& e)
     {
