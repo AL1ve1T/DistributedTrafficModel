@@ -7,10 +7,14 @@
 *.userosscache
 *.sln.docstates
 .vscode/
-./CMakeCache.txt
-./CMakeLists.txt.swp
-./src/Makefile
-./src/cmake_install.cmake
+CMakeCache.txt
+CMakeLists.txt.swp
+src/Makefile
+src/cmake_install.cmake
+CMakeFiles
+.DS_Store
+Makefile
+cmake_install.cmake
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
