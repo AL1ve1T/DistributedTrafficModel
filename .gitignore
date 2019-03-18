@@ -15,6 +15,7 @@ CMakeFiles
 .DS_Store
 Makefile
 cmake_install.cmake
+app/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
