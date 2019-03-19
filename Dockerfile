@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 
 RUN apt-get update && \
     apt-get install -y \
-      libboost-dev libboost-property-tree-dev \
+      libboost-dev libboost-filesystem-dev \
       libgtest-dev \
       cmake \
     && \
@@ -20,8 +20,7 @@ ADD ./src /app/src
 WORKDIR /app/build
 
 RUN cmake ../src && \
-    cmake --build . && \
-    CTEST_OUTPUT_ON_FAILURE=TRUE cmake --build . --target test
+    cmake --build . 
 
 # ------------------------------------------------------------
 # Run 
@@ -33,6 +32,6 @@ USER sample
 
 WORKDIR /app
 
-COPY --from=build /app/build/app.exe .
+COPY --from=build /app/build/build/debug/app.exe .
 
 ENTRYPOINT ["./app.exe"]
