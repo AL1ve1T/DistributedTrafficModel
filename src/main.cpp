@@ -16,21 +16,24 @@
 */
 /////////////////////////////////////////////////////////////////////////////
 
-#include "./include/DistributedTrafficModel.h"
 #include <iostream>
 // Boost includes
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 
-#define PROJ_ROOT "/Users/AliveIT/DistributedTrafficModel"
+#if defined(__unix__) && !defined(__linux__)
+    #define TRAFFIC_FILE "resource\\traffic.json"
+#else
+    #define TRAFFIC_FILE "resource/traffic.json"
+#endif
 
 int main(int argc, char* argv[])
 {
 	try
     {
         std::stringstream ss;
-        std::string path = PROJ_ROOT + std::string("/resource/traffic.json");
+        std::string path = TRAFFIC_FILE;
 		std::ifstream inFile(path);
         // Read file
         std::string data((std::istreambuf_iterator<char>(inFile)), 
@@ -45,7 +48,7 @@ int main(int argc, char* argv[])
         std::cerr << "Invalid JSON" << std::endl;
         std::cerr << e.what() << std::endl;
     }
-    catch (std::exception const& e)
+    catch (const std::exception& e)
     {
         std::cerr << e.what() << std::endl;
     }

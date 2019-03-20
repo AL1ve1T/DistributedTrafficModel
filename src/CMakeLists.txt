@@ -1,10 +1,11 @@
-﻿# CMakeList.txt : CMake project for DistributedTrafficModel, include source and define
+﻿# CMakeList.txt : CMake project for DistributedTrafficModel, 
+# include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.7)
 
 # Add source to this project's executable.
-add_executable (app.exe "DistributedTrafficModel.cpp" "include/DistributedTrafficModel.h")
+add_executable (app "main.cpp")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/build/debug)
 
@@ -33,7 +34,10 @@ find_package(Boost 1.66.0)
 
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    target_link_libraries(app.exe ${Boost_LIBRARIES})
+    target_link_libraries(app ${Boost_LIBRARIES})
 endif()
+
+# Copy resource directory into binary tree
+file(COPY "../resource" DESTINATION "../build/debug/resource")
 
 # TODO: Add tests and install targets if needed.

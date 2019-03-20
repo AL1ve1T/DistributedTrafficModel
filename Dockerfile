@@ -16,6 +16,7 @@ RUN apt-get update && \
     mv lib*.a /usr/lib
 
 ADD ./src /app/src
+ADD ./resource /app/resource
 
 WORKDIR /app/build
 
@@ -32,6 +33,7 @@ USER sample
 
 WORKDIR /app
 
-COPY --from=build /app/build/build/debug/app.exe .
+COPY ./resource /app/resource
+COPY --from=build /app/build/build/debug/app .
 
-ENTRYPOINT ["./app.exe"]
+ENTRYPOINT ["./app"]
