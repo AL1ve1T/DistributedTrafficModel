@@ -1,39 +1,32 @@
+#
+#   @uthor: Elnur Alimirzayev,  <elnur.alimirzayev@gmail.com>
+#                               <aliveit.elnur@gmail.com>
+# 
 # ------------------------------------------------------------
 # Build
 
-FROM gcc:latest as build
-
-WORKDIR /usr/src/app
+FROM ubuntu:latest
 
 RUN apt-get update && \
     apt-get install -y \
-      libboost-dev libboost-filesystem-dev \
-      libgtest-dev \
-      cmake \
-    && \
-    cmake -DCMAKE_BUILD_TYPE=Release /usr/src/gtest && \
-    cmake --build . && \
-    mv lib*.a /usr/lib
+      libboost-system-dev libboost-date-time-dev \
+      libboost-serialization-dev \
+      libboost-thread-dev \
+      g++ \
+      cmake 
 
-ADD ./src /app/src
-ADD ./resource /app/resource
+ADD . /app
 
-WORKDIR /app/build
+WORKDIR /app
 
-RUN cmake ../src && \
-    cmake --build . 
+RUN cmake . && \
+    make
 
 # ------------------------------------------------------------
 # Run 
 
-FROM ubuntu:latest
+RUN useradd -m docker && echo \ 
+  "docker:docker" | chpasswd && adduser docker sudo
+USER docker
 
-RUN groupadd -r sample && useradd -r -g sample sample
-USER sample
-
-WORKDIR /app
-
-COPY ./resource /app/resource
-COPY --from=build /app/build/build/debug/app .
-
-ENTRYPOINT ["./app"]
+ENTRYPOINT [ "/app/build/debug/app" ]
