@@ -9,7 +9,7 @@
 cmake_minimum_required (VERSION 3.7)
 
 # Add source to this project's executable.
-add_executable (app "main.cpp")
+add_executable (app "main.cpp" "node.cpp")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/build/debug)
 
@@ -25,7 +25,8 @@ set(Boost_USE_STATIC_LIBS       OFF)
 
 set(Boost_DEBUG ON)
 
-find_package(Boost 1.62.0 REQUIRED system date_time serialization thread)
+find_package(Boost 1.62.0 REQUIRED system date_time
+    serialization thread)
 
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})

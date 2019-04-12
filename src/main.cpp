@@ -4,7 +4,7 @@
 //   @uthor: Elnur Alimirzayev,  <elnur.alimirzayev@gmail.com>
 //                               <aliveit.elnur@gmail.com>
 // 
-/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 /*
 	This section describes common bussiness logic of 
 	this application.
@@ -18,7 +18,7 @@
 		}
 	}
 */
-/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 
 #include <iostream>
 // Boost includes
@@ -26,8 +26,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <boost/asio.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#include "include/node.hpp"
 
 #if defined(__unix__) && !defined(__linux__)
     #define TRAFFIC_FILE "resource\\traffic.json"
@@ -35,9 +35,7 @@
     #define TRAFFIC_FILE "resource/traffic.json"
 #endif
 
-using namespace boost::asio;
-
-void client_session(boost::shared_ptr<ip::tcp::socket> sock)
+/*void client_session(boost::shared_ptr<ip::tcp::socket> sock)
  {
     while ( true)
      {
@@ -45,7 +43,7 @@ void client_session(boost::shared_ptr<ip::tcp::socket> sock)
         size_t len = sock->read_some(buffer(data));
         if (len > 0) write(*sock, buffer("ok", 2));
     }
-}
+}*/
 
 int main(int argc, char* argv[])
 {
@@ -62,18 +60,11 @@ int main(int argc, char* argv[])
         boost::property_tree::ptree pt;
         boost::property_tree::read_json(ss, pt);
 
-        io_service service;
-        ip::tcp::endpoint ep(ip::address::from_string("127.0.0.1"), atoi(argv[1]));
-        ip::tcp::acceptor acc(service, ep);
-        
-        while (true) 
-        {
-            boost::shared_ptr<ip::tcp::socket> sock(new ip::tcp::socket(service));
-            acc.accept(*sock);
-            boost::thread(boost::bind(client_session, sock));
-        }
+        Node node(data);
+        node.acceptConnections();
     }
-    catch (const boost::property_tree::json_parser::json_parser_error& e)
+    catch (const boost::property_tree::json_parser
+        ::json_parser_error& e)
     {
         std::cerr << "Invalid JSON" << std::endl;
         std::cerr << e.what() << std::endl;
