@@ -4,7 +4,7 @@
 //   @uthor: Elnur Alimirzayev,  <elnur.alimirzayev@gmail.com>
 //                               <aliveit.elnur@gmail.com>
 // 
-///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 /*
 	This section describes common bussiness logic of 
 	this application.
@@ -18,10 +18,9 @@
 		}
 	}
 */
-///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
-// Boost includes
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
@@ -60,7 +59,7 @@ int main(int argc, char* argv[])
         boost::property_tree::ptree pt;
         boost::property_tree::read_json(ss, pt);
 
-        Node node(data);
+        Node node(pt, atoi(argv[2]), argv[1]);
         node.acceptConnections();
     }
     catch (const boost::property_tree::json_parser

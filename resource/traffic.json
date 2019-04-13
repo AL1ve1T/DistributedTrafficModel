@@ -1,34 +1,46 @@
 {
     "0": {
+        "port": 8000,
         "1": {
-            "weight": 2
+            "weight": 2,
+            "port": 8001
         },
         "3": {
-            "weight": 8
+            "weight": 8,
+            "port": 8003
         }
     }, 
     "1": {
+        "port": 8001,
         "0": {
-            "weight": 2
+            "weight": 2,
+            "port": 8000
         },
         "2": {
-            "weight": 3
+            "weight": 3,
+            "port": 8002
         }
     },
     "2": {
+        "port": 8002,
         "1": {
-            "weight": 3
+            "weight": 3,
+            "port": 8001
         },
         "3": {
-            "weight": 2
+            "weight": 2,
+            "port": 8003
         }
     },
     "3": {
+        "port": 8003,
         "0": {
-            "weight": 8
+            "weight": 8,
+            "port": 8000
         },
         "2": {
-            "weight": 2
+            "weight": 2,
+            "port": 8002
         }
     }
 }

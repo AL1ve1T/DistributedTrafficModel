@@ -1,10 +1,9 @@
-///////////////////////////////////////////////////////////////
-// This file contains definition of Node class. 
-// See implementation in node.cpp file
+// node.cpp : Defines the node of the network.
 //
 //   @uthor: Elnur Alimirzayev,  <elnur.alimirzayev@gmail.com>
 //                               <aliveit.elnur@gmail.com>
 // 
+////////////////////////////////////////////////////////////////////////////////
 
 #include <algorithm>
 // Boost includes
@@ -30,9 +29,13 @@ class Node {
 
         // Contains list of neighbour nodes 
         // in the following format:
-        // <node_label : port_on_host_machine> 
-        boost::container::map
-            <std::string, std::string> neighbourNodes;
+        // <node_label : weight_of_edge> 
+        boost::container::map<std::string, int> neighbourNodes;
+        
+        // Contains endpoints of neighbour nodes
+        // in the following format:
+        // <node_label : port>
+        boost::container::map<std::string, int> neighbourNodeEndpoints;
 
         // Label of current node.
         // Used to determine current node
@@ -44,7 +47,8 @@ class Node {
         int port;
     public:
         // Constructor
-        Node(std::string traffic_config);
+        Node(const boost::property_tree::ptree& traffic_config, 
+            int port, char* id);
 
         // Accept incoming connections
         void acceptConnections();
@@ -56,7 +60,7 @@ class Node {
 
         // Pass message to neighbour node.
         // If message is passed successfully method 
-        // returns 'true', else 'false'
+        // returns 'true', otherwise 'false'
         bool passMessageTo();
         
         // Sends "echo" message to neighbour nodes
