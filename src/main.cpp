@@ -3,10 +3,10 @@
 //
 //   @uthor: Elnur Alimirzayev,  <elnur.alimirzayev@gmail.com>
 //                               <aliveit.elnur@gmail.com>
-// 
+//
 ////////////////////////////////////////////////////////////////////////////////
 /*
-	This section describes common bussiness logic of 
+	This section describes common bussiness logic of
 	this application.
 
 	Generally we have a set of nodes which description
@@ -26,6 +26,7 @@
 #include <boost/foreach.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <boost/chrono.hpp>
 #include "include/node.hpp"
 
 #if defined(__unix__) && !defined(__linux__)
@@ -50,17 +51,28 @@ int main(int argc, char* argv[])
     {
         std::stringstream ss;
         std::string path = TRAFFIC_FILE;
-		std::ifstream inFile(path);
+        std::ifstream inFile(path);
         // Read file
-        std::string data((std::istreambuf_iterator<char>(inFile)), 
+        std::string data((std::istreambuf_iterator<char>(inFile)),
             (std::istreambuf_iterator<char>()));
         ss << data;
 
         boost::property_tree::ptree pt;
         boost::property_tree::read_json(ss, pt);
+        int _port = pt.get_child(argv[1]).get<int>("port");
+        char* _id = argv[1];
 
-        Node node(pt, atoi(argv[2]), argv[1]);
-        node.acceptConnections();
+        Node node(pt, _port, _id);
+        boost::thread acceptor_thrd(&Node::acceptConnections, &node);
+        std::cout << "Node is listening for connections on port " << _port
+            << std::endl;
+        acceptor_thrd.detach();
+
+        ////////////////////////////////////////////////////////////////////
+        // Sleep for 5 sec and then check the network
+        boost::this_thread::sleep_for(boost::chrono::seconds(5));
+        node.checkNetwork();
+        acceptor_thrd.join();
     }
     catch (const boost::property_tree::json_parser
         ::json_parser_error& e)

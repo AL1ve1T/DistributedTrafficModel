@@ -40,7 +40,7 @@ class Node {
         // Label of current node.
         // Used to determine current node
         // in a distributed system
-        std::string label;
+        std::string id;
 
         // Port using on a host machine
         // (container port is always :80)
@@ -61,10 +61,10 @@ class Node {
         // Pass message to neighbour node.
         // If message is passed successfully method 
         // returns 'true', otherwise 'false'
-        bool passMessageTo();
+        static bool passMessageTo(const boost::system::error_code& ec);
         
         // Sends "echo" message to neighbour nodes
-        static void echoSession(boost::asio::ip::tcp::socket socket);
+        static void echoSession(boost::asio::ip::tcp::socket& _socket);
 
         // Destructor
         ~Node();
