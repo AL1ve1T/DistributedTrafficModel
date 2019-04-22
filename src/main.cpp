@@ -66,7 +66,6 @@ int main(int argc, char* argv[])
         boost::thread acceptor_thrd(&Node::acceptConnections, &node);
         std::cout << "Node is listening for connections on port " << _port
             << std::endl;
-        acceptor_thrd.detach();
 
         ////////////////////////////////////////////////////////////////////
         // Sleep for 5 sec and then check the network

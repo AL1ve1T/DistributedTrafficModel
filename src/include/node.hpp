@@ -13,13 +13,15 @@
 #include <boost/container/map.hpp>
 #include <boost/asio.hpp>
 
+#define STATUS_OK "OK"
+
 class Node {
     private:
         // Property tree for JSON parser
         boost::property_tree::ptree pt;
 
         // IO service from boost::asio lib
-        boost::asio::io_service service;
+        boost::asio::io_context context;
 
         // IP endpoint
         boost::asio::ip::tcp::endpoint endpoint;
