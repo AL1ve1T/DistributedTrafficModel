@@ -9,13 +9,13 @@
 cmake_minimum_required (VERSION 3.7)
 
 # Add source to this project's executable.
-add_executable (app "main.cpp" "node.cpp")
+add_executable (app "main.cpp" "node.cpp" "message.cpp")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/build/debug)
 
 # Set debug mode
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17")
 
 set(Boost_USE_STATIC_LIBS        ON)  # only find static libs 
 set(Boost_USE_DEBUG_LIBS         ON)  # ignore debug libs and 

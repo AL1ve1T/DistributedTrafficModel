@@ -71,6 +71,19 @@ int main(int argc, char* argv[])
         // Sleep for 5 sec and then check the network
         boost::this_thread::sleep_for(boost::chrono::seconds(5));
         node.checkNetwork();
+
+        ////////////////////////////////////////////////////////////////////
+        // Now application waits for user to insert start and destination
+        // nodes, and then algorithm will be proceeding.
+        while (true) {
+            int _start;
+            int _end;
+            std::cout << "Start from: ";
+            std::cin >> _start;
+            std::cout << "To: ";
+            std::cin >> _end;
+            node.dijkstraCalculation(_start, _end);
+        }
         acceptor_thrd.join();
     }
     catch (const boost::property_tree::json_parser

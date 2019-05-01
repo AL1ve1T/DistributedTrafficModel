@@ -1,9 +1,9 @@
+////////////////////////////////////////////////////////////////////////////////
 // node.cpp : Defines the node of the network.
 //
 //   @uthor: Elnur Alimirzayev,  <elnur.alimirzayev@gmail.com>
 //                               <aliveit.elnur@gmail.com>
 // 
-////////////////////////////////////////////////////////////////////////////////
 
 #include <algorithm>
 // Boost includes
@@ -15,6 +15,16 @@
 
 #define STATUS_OK "OK"
 
+////////////////////////////////////////////////////////////////////////////////
+// The following enumeration represents method which will be used by this app.
+////////////////////////////////////////////////////////////////////////////////
+enum Methods { DIJKSTRA = 0 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Following code defines class implementing the node of distributed system.
+// The Node keeps connection with neighbour nodes and accepts requests from
+// them to participate the calculation of the shortest path.
+////////////////////////////////////////////////////////////////////////////////
 class Node {
     private:
         // Property tree for JSON parser
@@ -60,6 +70,9 @@ class Node {
         // messages between nodes
         void checkNetwork();
 
+        // Reads whole JSON tree and defines the method
+        void defineSession(boost::asio::ip::tcp::socket& _socket);
+
         // Pass message to neighbour node.
         // If message is passed successfully method 
         // returns 'true', otherwise 'false'
@@ -68,6 +81,12 @@ class Node {
         // Sends "echo" message to neighbour nodes
         static void echoSession(boost::asio::ip::tcp::socket& _socket);
 
+        // Method implements Dijkstra's algorithm in the distributed system
+        void dijkstraCalculation(int _start, int _end);
+
+        // Handles session computing Dijkstra's algorithm
+        void dijkstraSession(boost::property_tree::ptree& _pt);
+
         // Destructor
         ~Node();
-};
+}; // end Node
