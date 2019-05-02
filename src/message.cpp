@@ -54,11 +54,16 @@ Message::Message(const std::string _str) {
     }
 }
 
+Message::Message(const boost::property_tree::ptree& _tree) {
+    this->jsonTree = _tree;
+}
+
 Message::Message(int _start, int _end) {
     boost::property_tree::ptree initTree;
     this->startNode = _start;
     this->destinationNode = _end;
 
+    initTree.put("method", 0);
     initTree.put("start", _start);
     initTree.put("end", _end);
 
@@ -71,6 +76,20 @@ Message::Message(int _start, int _end) {
     boost::property_tree::ptree tags;
     tags.put(std::to_string(_start), 0);
     initTree.add_child("tags", tags);
+
+    boost::property_tree::ptree paths;
+    paths.put(std::to_string(_start), "");
+    initTree.add_child("paths", paths);
+
+    this->jsonTree = initTree;
+}
+
+int Message::getDestination() {
+    return this->destinationNode;
+}
+
+int Message::getStart() {
+    return this->startNode;
 }
 
 std::vector<int> Message::getKnownNodes() {
@@ -99,7 +118,7 @@ boost::container::map<int, int> Message::getTags() {
 
 std::string Message::encodeString() {
     std::ostringstream oss;
-    boost::property_tree::ini_parser::write_ini(oss, this->jsonTree);
+    boost::property_tree::write_json(oss, this->jsonTree);
     return oss.str();
 }
 

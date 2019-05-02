@@ -6,6 +6,7 @@
 // 
 
 #include <algorithm>
+#include "message.hpp"
 // Boost includes
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -42,12 +43,12 @@ class Node {
         // Contains list of neighbour nodes 
         // in the following format:
         // <node_label : weight_of_edge> 
-        boost::container::map<std::string, int> neighbourNodes;
+        boost::container::map<int, int> neighbourNodes;
         
         // Contains endpoints of neighbour nodes
         // in the following format:
         // <node_label : port>
-        boost::container::map<std::string, int> neighbourNodeEndpoints;
+        boost::container::map<int, int> neighbourNodeEndpoints;
 
         // Label of current node.
         // Used to determine current node
@@ -82,7 +83,7 @@ class Node {
         static void echoSession(boost::asio::ip::tcp::socket& _socket);
 
         // Method implements Dijkstra's algorithm in the distributed system
-        void dijkstraCalculation(int _start, int _end);
+        void dijkstraCalculation(Message& msg);
 
         // Handles session computing Dijkstra's algorithm
         void dijkstraSession(boost::property_tree::ptree& _pt);

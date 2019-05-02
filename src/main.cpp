@@ -69,20 +69,17 @@ int main(int argc, char* argv[])
 
         ////////////////////////////////////////////////////////////////////
         // Sleep for 5 sec and then check the network
-        boost::this_thread::sleep_for(boost::chrono::seconds(5));
-        node.checkNetwork();
-
+        // boost::this_thread::sleep_for(boost::chrono::seconds(5));
         ////////////////////////////////////////////////////////////////////
         // Now application waits for user to insert start and destination
         // nodes, and then algorithm will be proceeding.
         while (true) {
-            int _start;
+            int _start = atoi(_id);
             int _end;
-            std::cout << "Start from: ";
-            std::cin >> _start;
             std::cout << "To: ";
             std::cin >> _end;
-            node.dijkstraCalculation(_start, _end);
+            Message msg(_start, _end);
+            node.dijkstraCalculation(msg);
         }
         acceptor_thrd.join();
     }

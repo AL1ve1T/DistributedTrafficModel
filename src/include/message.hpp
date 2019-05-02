@@ -40,6 +40,12 @@ class Message {
         // Array of paths
         boost::container::map<int, std::vector<int>> paths;
     public:
+        // Get destination node
+        int getDestination();
+
+        // Get start node
+        int getStart();
+
         // Get knownNodes
         std::vector<int> getKnownNodes();
 
@@ -60,6 +66,9 @@ class Message {
 
         // Encodes JSON tree into string to send it via network.
         std::string encodeString();
+
+        // Forms Message using existing property tree
+        Message(const boost::property_tree::ptree& _tree);
 
         // Forms Message from a string
         Message(const std::string _str);
