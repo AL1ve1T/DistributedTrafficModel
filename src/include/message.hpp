@@ -32,14 +32,20 @@ class Message {
         boost::container::map<int, int> tags;
 
         // Already visited nodes
-        std::vector<int> visitedNodes;
+        std::set<int> visitedNodes;
 
         // Already known nodes
-        std::vector<int> knownNodes;
+        std::set<int> knownNodes;
 
         // Array of paths
         boost::container::map<int, std::vector<int>> paths;
     public:
+        // Set label of Node from where message came
+        void setMsgCameFrom(int _val);
+
+        // Get label of Node from where message came
+        int getMsgCameFrom();
+
         // Get destination node
         int getDestination();
 
@@ -47,16 +53,16 @@ class Message {
         int getStart();
 
         // Get knownNodes
-        std::vector<int> getKnownNodes();
+        std::set<int> getKnownNodes();
 
         // Set knownNodes
-        void setKnownNodes(std::vector<int>& _val);
+        void setKnownNodes(std::set<int>& _val);
 
         // Get visitedNodes
-        std::vector<int> getVisitedNodes();
+        std::set<int> getVisitedNodes();
 
         // Set visitedNodes
-        void setVisitedNodes(std::vector<int>& _val);
+        void setVisitedNodes(std::set<int>& _val);
 
         // Get shortest paths to nodes
         boost::container::map<int, std::vector<int>> getPaths();

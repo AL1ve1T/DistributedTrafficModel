@@ -53,7 +53,7 @@ class Node {
         // Label of current node.
         // Used to determine current node
         // in a distributed system
-        std::string id;
+        int id;
 
         // Port using on a host machine
         // (container port is always :80)
@@ -86,7 +86,7 @@ class Node {
         void dijkstraCalculation(Message& msg);
 
         // Handles session computing Dijkstra's algorithm
-        void dijkstraSession(boost::property_tree::ptree& _pt);
+        void dijkstraSession(std::string _data);
 
         // Destructor
         ~Node();
