@@ -99,6 +99,7 @@ void Node::defineSession(boost::asio::ip::tcp::socket& _socket) {
     switch (method) {
         case DIJKSTRA:
             this->dijkstraSession(data);
+            break;
         default:
             std::cout << "Method not recognized" << std::endl;
             return;
@@ -120,21 +121,32 @@ void Node::echoSession(boost::asio::ip::tcp::socket& _socket) {
 void Node::dijkstraCalculation(Message& msg) {
     typedef boost::container::map<int, int> map_def;
     //////////////////////////////////////////////////////////////////////
-    // Update visited nodes
-    std::set<int> _t = {this->id};
-    msg.setVisitedNodes(_t);
-    //////////////////////////////////////////////////////////////////////
     // Update known nodes
-    std::set<int> to_insert;
+    std::set<int> to_insert = {this->id};
     BOOST_FOREACH(map_def::value_type& v, this->neighbourNodes) {
         to_insert.insert(v.first);
     }
-    msg.setVisitedNodes(to_insert);
+    msg.setKnownNodes(to_insert);
+    // Update visited nodes
+    std::set<int> _t = {this->id};
+    msg.setVisitedNodes(_t);
+    // Update tags and paths
+    boost::container::map<int, int> _tags = msg.getTags();
+    boost::container::map<int, std::vector<int>> _paths = msg.getPaths();
+    BOOST_FOREACH(map_def::value_type& v, this->neighbourNodes) {
+        if (_tags[this->id] + v.second < _tags[v.first]) {
+            _tags[v.first] = _tags[this->id] + v.second;
+            std::vector<int> _newPath(_paths.at(this->id));
+            _newPath.push_back(v.first);
+            _paths[v.first] = _newPath;
+        }
+    }
+    msg.updateJsonTree();
 
     boost::asio::io_service _service;
     int msgCameFrom = msg.getMsgCameFrom();
-    std::string strToSend = msg.encodeString();
     msg.setMsgCameFrom(this->id);
+    std::string strToSend = msg.encodeString();
 
     BOOST_FOREACH(map_def::value_type& v, this->neighbourNodeEndpoints) {
         // Check if message contains current node as visited
@@ -153,9 +165,9 @@ void Node::dijkstraCalculation(Message& msg) {
         // The following code is waiting for node to handle response /////////
         //////////////////////////////////////////////////////////////////////
         boost::asio::io_service io_service;
+        int _port = this->port + 1000;
         boost::asio::ip::tcp::endpoint ep(
-            boost::asio::ip::address::from_string("127.0.0.1"), 
-            this->port + 1000);
+            boost::asio::ip::address::from_string("127.0.0.1"), _port);
         boost::asio::ip::tcp::acceptor acceptor(io_service, ep);
 
         std::cout << "Waiting for callback..." << std::endl;
@@ -209,17 +221,24 @@ void Node::dijkstraCalculation(Message& msg) {
             currentPaths.insert(
                 std::make_pair(it->first, newPaths.at(it->first)));
         }
+        msg.updateJsonTree();
     }
-    //////////////////////////////////////////////////////////////////////
-    // Now send response back to node
-    msg.setMsgCameFrom(msgCameFrom);
-    strToSend = msg.encodeString();
-    int _port = this->neighbourNodeEndpoints.at(msgCameFrom) + 1000;
-    boost::asio::ip::tcp::endpoint _ep = boost::asio::ip::tcp::endpoint(
-        boost::asio::ip::address::from_string("127.0.0.1"), _port);
-    boost::asio::ip::tcp::socket _sock = boost::asio::ip::tcp::socket(_service);
-    _sock.connect(_ep);
-    write(_sock, boost::asio::buffer(strToSend, strToSend.length()));
+    if (msgCameFrom != -1) {
+        //////////////////////////////////////////////////////////////////////
+        // Now send response back to node
+        msg.setMsgCameFrom(msgCameFrom);
+        strToSend = msg.encodeString();
+        int _port = this->neighbourNodeEndpoints.at(msgCameFrom) + 1000;
+        boost::asio::ip::tcp::endpoint _ep = boost::asio::ip::tcp::endpoint(
+            boost::asio::ip::address::from_string("127.0.0.1"), _port);
+        boost::asio::ip::tcp::socket _sock = 
+            boost::asio::ip::tcp::socket(_service);
+        _sock.connect(_ep);
+        write(_sock, boost::asio::buffer(strToSend, strToSend.length()));
+        return;
+    }
+
+    std::cout << "Got it!" << std::endl;
 
     //////////////////////////////////////////////////////////////////////
     // End of code block

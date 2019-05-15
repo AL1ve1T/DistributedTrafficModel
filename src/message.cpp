@@ -30,14 +30,16 @@ std::vector<T> as_vector(boost::property_tree::ptree const& pt,
         boost::property_tree::ptree::key_type const& key)
 {
     std::vector<T> r;
-    for (auto& item : pt.get_child(key))
+    for (auto& item : pt)
         r.push_back(item.second.get_value<T>());
     return r;
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-Message::Message(const std::string _str) {
-    boost::property_tree::read_json(_str.c_str(), this->jsonTree);
+Message::Message(std::string _str) {
+    std::stringstream ss;
+    ss << _str;
+    boost::property_tree::read_json(ss, this->jsonTree);
     startNode       = jsonTree.get<int>("start");
     destinationNode = jsonTree.get<int>("end");
     method          = jsonTree.get<int>("method");
@@ -64,7 +66,7 @@ Message::Message(const std::string _str) {
     }
 }
 
-Message::Message(const boost::property_tree::ptree& _tree) {
+Message::Message(boost::property_tree::ptree& _tree) {
     this->jsonTree = _tree;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,10 +97,65 @@ Message::Message(int _start, int _end) {
     initTree.add_child("tags", tags);
 
     boost::property_tree::ptree paths;
-    paths.put(std::to_string(_start), "");
+    boost::property_tree::ptree _arr;
+    boost::property_tree::ptree _child;
+    _child.put("", _start); 
+    _arr.push_back(std::make_pair("", _child));
+    paths.add_child(std::to_string(_start), _arr);
     initTree.add_child("paths", paths);
 
+    initTree.put("msgCameFrom", -1);
+
     this->jsonTree = initTree;
+}
+
+void Message::updateJsonTree() {
+    //////////////////////////////////////////////////////////////////////
+    // Update knownNodes tree
+    boost::property_tree::ptree knownNodesTree;
+    BOOST_FOREACH(int x, this->knownNodes) {
+        boost::property_tree::ptree node;
+        node.put("", x);
+        knownNodesTree.push_back(std::make_pair("", node));
+    }
+    this->jsonTree.erase("knownNodes");
+    this->jsonTree.add_child("knownNodes", knownNodesTree);
+
+    //////////////////////////////////////////////////////////////////////
+    // Update visitedNodes tree
+    boost::property_tree::ptree visitedNodesTree;
+    BOOST_FOREACH(int x, this->visitedNodes) {
+        boost::property_tree::ptree node;
+        node.put("", x);
+        visitedNodesTree.push_back(std::make_pair("", node));
+    }
+    this->jsonTree.erase("visitedNodes");
+    this->jsonTree.add_child("visitedNodes", visitedNodesTree);
+
+    //////////////////////////////////////////////////////////////////////
+    // Update tags
+    typedef boost::container::map<int, int> map_def;
+    boost::property_tree::ptree _tags = jsonTree.get_child("tags");
+    BOOST_FOREACH(map_def::value_type& v, this->tags) {
+        _tags.put(std::to_string(v.first), v.second);
+    }
+    jsonTree.add_child("tags", _tags);
+
+    //////////////////////////////////////////////////////////////////////
+    // Update paths
+    typedef boost::container::map<int, std::vector<int>> _map_def;
+    boost::property_tree::ptree _paths = jsonTree.get_child("paths");
+    BOOST_FOREACH(_map_def::value_type& v, this->paths) {
+        boost::property_tree::ptree _arr;
+        boost::property_tree::ptree _child;
+        std::vector<int> _col = v.second;
+        for (int x : _col) {
+            _child.put("", x);
+            _arr.push_back(std::make_pair("", _child));
+        }
+        _paths.add_child(std::to_string(v.first), _arr);
+    }
+    jsonTree.add_child("paths", _paths);
 }
 
 void Message::setMsgCameFrom(int _val) {

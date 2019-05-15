@@ -85,8 +85,14 @@ class Node {
         // Method implements Dijkstra's algorithm in the distributed system
         void dijkstraCalculation(Message& msg);
 
+        // Method implements Levit's algorithm in the distributed system
+        void levitCalculation(Message& msg);
+
         // Handles session computing Dijkstra's algorithm
         void dijkstraSession(std::string _data);
+
+        // Handles session computing Levit's algorithm
+        void levitSession(std::string _data);
 
         // Destructor
         ~Node();

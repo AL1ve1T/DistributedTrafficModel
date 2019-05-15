@@ -40,6 +40,9 @@ class Message {
         // Array of paths
         boost::container::map<int, std::vector<int>> paths;
     public:
+        // Update JSON tree
+        void updateJsonTree();
+
         // Set label of Node from where message came
         void setMsgCameFrom(int _val);
 
@@ -74,10 +77,10 @@ class Message {
         std::string encodeString();
 
         // Forms Message using existing property tree
-        Message(const boost::property_tree::ptree& _tree);
+        Message(boost::property_tree::ptree& _tree);
 
         // Forms Message from a string
-        Message(const std::string _str);
+        Message(std::string _str);
 
         // Forms an initial Message from start and destination nodes
         Message(int _start, int _end);
