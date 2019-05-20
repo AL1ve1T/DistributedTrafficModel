@@ -68,10 +68,16 @@ class Message {
         void setVisitedNodes(std::set<int>& _val);
 
         // Get shortest paths to nodes
-        boost::container::map<int, std::vector<int>> getPaths();
+        boost::container::map<int, std::vector<int>>& getPaths();
+
+        // Set shortest paths to nodes
+        void setPaths(boost::container::map<int, std::vector<int>>& paths);
 
         // Get tags from node
-        boost::container::map<int, int> getTags();
+        boost::container::map<int, int>& getTags();
+
+        // Set tags to node
+        void setTags(boost::container::map<int, int>& tags);
 
         // Encodes JSON tree into string to send it via network.
         std::string encodeString();

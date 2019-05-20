@@ -134,6 +134,11 @@ void Node::dijkstraCalculation(Message& msg) {
     boost::container::map<int, int> _tags = msg.getTags();
     boost::container::map<int, std::vector<int>> _paths = msg.getPaths();
     BOOST_FOREACH(map_def::value_type& v, this->neighbourNodes) {
+        // Check if key exists
+        if (_tags.find(v.first) == _tags.end()) {
+            _tags[v.first] = INT_MAX;
+            _paths[v.first] = std::vector<int>();
+        }
         if (_tags[this->id] + v.second < _tags[v.first]) {
             _tags[v.first] = _tags[this->id] + v.second;
             std::vector<int> _newPath(_paths.at(this->id));
@@ -141,12 +146,17 @@ void Node::dijkstraCalculation(Message& msg) {
             _paths[v.first] = _newPath;
         }
     }
+    msg.setTags(_tags);
+    msg.setPaths(_paths);
     msg.updateJsonTree();
 
     boost::asio::io_service _service;
     int msgCameFrom = msg.getMsgCameFrom();
     msg.setMsgCameFrom(this->id);
     std::string strToSend = msg.encodeString();
+
+    // Result declared here:
+    std::vector<int> path;
 
     BOOST_FOREACH(map_def::value_type& v, this->neighbourNodeEndpoints) {
         // Check if message contains current node as visited
@@ -222,6 +232,10 @@ void Node::dijkstraCalculation(Message& msg) {
                 std::make_pair(it->first, newPaths.at(it->first)));
         }
         msg.updateJsonTree();
+        newPaths = incomingMsg.getPaths();
+        int end = msg.getDestination();
+        path = newPaths.at(end);
+        std::cout << "Callback received." << std::endl;
     }
     if (msgCameFrom != -1) {
         //////////////////////////////////////////////////////////////////////
@@ -237,8 +251,9 @@ void Node::dijkstraCalculation(Message& msg) {
         write(_sock, boost::asio::buffer(strToSend, strToSend.length()));
         return;
     }
-
-    std::cout << "Got it!" << std::endl;
+    std::cout << std::endl << "Path : ";
+    for (auto x : path) {std::cout << x << " ";}
+    std::cout << std::endl;
 
     //////////////////////////////////////////////////////////////////////
     // End of code block

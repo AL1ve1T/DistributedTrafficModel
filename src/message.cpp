@@ -13,6 +13,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 
+#include <iostream>
+
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 template <typename T>
@@ -95,14 +97,16 @@ Message::Message(int _start, int _end) {
     boost::property_tree::ptree tags;
     tags.put(std::to_string(_start), 0);
     initTree.add_child("tags", tags);
+    this->tags[_start] = 0;
 
     boost::property_tree::ptree paths;
     boost::property_tree::ptree _arr;
     boost::property_tree::ptree _child;
-    _child.put("", _start); 
+    _child.put("", _start);
     _arr.push_back(std::make_pair("", _child));
     paths.add_child(std::to_string(_start), _arr);
     initTree.add_child("paths", paths);
+    this->paths[_start] = std::vector<int>({0});
 
     initTree.put("msgCameFrom", -1);
 
@@ -139,7 +143,8 @@ void Message::updateJsonTree() {
     BOOST_FOREACH(map_def::value_type& v, this->tags) {
         _tags.put(std::to_string(v.first), v.second);
     }
-    jsonTree.add_child("tags", _tags);
+    this->jsonTree.erase("tags");
+    this->jsonTree.add_child("tags", _tags);
 
     //////////////////////////////////////////////////////////////////////
     // Update paths
@@ -153,9 +158,11 @@ void Message::updateJsonTree() {
             _child.put("", x);
             _arr.push_back(std::make_pair("", _child));
         }
+        _paths.erase(std::to_string(v.first));
         _paths.add_child(std::to_string(v.first), _arr);
     }
-    jsonTree.add_child("paths", _paths);
+    this->jsonTree.erase("paths");
+    this->jsonTree.add_child("paths", _paths);
 }
 
 void Message::setMsgCameFrom(int _val) {
@@ -181,7 +188,7 @@ std::set<int> Message::getKnownNodes() {
 void Message::setKnownNodes(std::set<int>& _val) {
     this->knownNodes.insert(_val.begin(), _val.end());
     boost::property_tree::ptree knownNodesTree;
-    BOOST_FOREACH(int x, _val) {
+    BOOST_FOREACH(int x, this->knownNodes) {
         boost::property_tree::ptree node;
         node.put("", x);
         knownNodesTree.push_back(std::make_pair("", node));
@@ -197,7 +204,7 @@ std::set<int> Message::getVisitedNodes() {
 void Message::setVisitedNodes(std::set<int>& _val) {
     this->visitedNodes.insert(_val.begin(), _val.end());
     boost::property_tree::ptree visitedNodesTree;
-    BOOST_FOREACH(int x, _val) {
+    BOOST_FOREACH(int x, this->visitedNodes) {
         boost::property_tree::ptree node;
         node.put("", x);
         visitedNodesTree.push_back(std::make_pair("", node));
@@ -206,12 +213,20 @@ void Message::setVisitedNodes(std::set<int>& _val) {
     this->jsonTree.add_child("visitedNodes", visitedNodesTree);
 }
 
-boost::container::map<int, std::vector<int>> Message::getPaths() {
+boost::container::map<int, std::vector<int>>& Message::getPaths() {
     return this->paths;
 }
 
-boost::container::map<int, int> Message::getTags() {
+void Message::setPaths(boost::container::map<int, std::vector<int>>& paths) {
+    this->paths = paths;
+}
+
+boost::container::map<int, int>& Message::getTags() {
     return this->tags;
+}
+
+void Message::setTags(boost::container::map<int, int>& tags) {
+    this->tags = tags;
 }
 
 std::string Message::encodeString() {

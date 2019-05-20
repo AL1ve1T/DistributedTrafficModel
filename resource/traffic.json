@@ -5,21 +5,51 @@
         [
             {
                 "id": 1,
-                "weight": 2,
+                "weight": 5,
                 "capacity": 5,
                 "port": 8001
+            },
+            {
+                "id": 2,
+                "weight": 1,
+                "capacity": 5,
+                "port": 8002
             }
         ]
     }, 
-    "1": {
+    "1": {  
         "port": 8001,
         "neighbours": 
         [
             {
                 "id": 0,
-                "weight": 2,
+                "weight": 5,
                 "capacity": 5,
                 "port": 8000
+            },
+            {
+                "id": 2,
+                "weight": 2,
+                "capacity": 5,
+                "port": 8002
+            }
+        ]
+    },
+    "2": {  
+        "port": 8002,
+        "neighbours": 
+        [
+            {
+                "id": 0,
+                "weight": 1,
+                "capacity": 5,
+                "port": 8000
+            },
+            {
+                "id": 1,
+                "weight": 2,
+                "capacity": 5,
+                "port": 8001
             }
         ]
     }
