@@ -39,6 +39,9 @@ class Message {
 
         // Array of paths
         boost::container::map<int, std::vector<int>> paths;
+
+        // Queue of nodes
+        std::vector<int> queue;
     public:
         // Update JSON tree
         void updateJsonTree();
@@ -78,6 +81,15 @@ class Message {
 
         // Set tags to node
         void setTags(boost::container::map<int, int>& tags);
+
+        // Set queue of nodes
+        void setQueue(std::vector<int>& _queue);
+
+        // Add node to queue
+        void appendQueue(std::vector<int>& _queue);
+
+        // Get queue of nodes
+        std::vector<int>& getQueue();
 
         // Encodes JSON tree into string to send it via network.
         std::string encodeString();

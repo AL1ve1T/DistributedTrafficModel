@@ -29,6 +29,8 @@
 #include <boost/chrono.hpp>
 #include "include/node.hpp"
 
+#include <ctime>
+
 #if defined(__unix__) && !defined(__linux__)
     #define TRAFFIC_FILE "resource\\traffic.json"
 #else
@@ -78,8 +80,16 @@ int main(int argc, char* argv[])
             int _end;
             std::cout << "To: ";
             std::cin >> _end;
+
+            boost::chrono::time_point _s = boost::chrono::system_clock::now();
+
             Message msg(_start, _end);
             node.dijkstraCalculation(msg);
+            
+            boost::chrono::time_point _e = boost::chrono::system_clock::now();
+            std::cout << "Work finished in " << boost::chrono::duration_cast
+                <boost::chrono::milliseconds>(_e - _s).count() 
+                << " milliseconds" << std::endl;
         }
         acceptor_thrd.join();
     }

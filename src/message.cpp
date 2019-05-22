@@ -36,6 +36,16 @@ std::vector<T> as_vector(boost::property_tree::ptree const& pt,
         r.push_back(item.second.get_value<T>());
     return r;
 }
+
+template <typename T>
+std::vector<T> as_vector_q(boost::property_tree::ptree const& pt, 
+        boost::property_tree::ptree::key_type const& key)
+{
+    std::vector<T> r;
+    for (auto& item : pt.get_child(key))
+        r.push_back(item.second.get_value<T>());
+    return r;
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 Message::Message(std::string _str) {
@@ -45,11 +55,11 @@ Message::Message(std::string _str) {
     startNode       = jsonTree.get<int>("start");
     destinationNode = jsonTree.get<int>("end");
     method          = jsonTree.get<int>("method");
+    queue           = as_vector_q<int>(jsonTree, "queue");
     visitedNodes    = as_set<int>(jsonTree, "visitedNodes");
     knownNodes      = as_set<int>(jsonTree, "knownNodes");
 
     boost::property_tree::ptree _tags = jsonTree.get_child("tags");
-
     BOOST_FOREACH(const boost::property_tree::ptree::value_type &v, 
             jsonTree.get_child("tags")) {
         int _label = atoi(v.first.data());
@@ -93,6 +103,10 @@ Message::Message(int _start, int _end) {
     visitedNodes.push_back(std::make_pair("", node));
     initTree.add_child("visitedNodes", visitedNodes);
     this->visitedNodes.insert(_start);
+
+    boost::property_tree::ptree queue;
+    initTree.add_child("queue", queue);
+    this->queue.push_back(_start);
     
     boost::property_tree::ptree tags;
     tags.put(std::to_string(_start), 0);
@@ -163,6 +177,17 @@ void Message::updateJsonTree() {
     }
     this->jsonTree.erase("paths");
     this->jsonTree.add_child("paths", _paths);
+
+    //////////////////////////////////////////////////////////////////////
+    // Update queue
+    boost::property_tree::ptree queueTree;
+    BOOST_FOREACH(int x, this->queue) {
+        boost::property_tree::ptree node;
+        node.put("", x);
+        queueTree.push_back(std::make_pair("", node));
+    }
+    this->jsonTree.erase("queue");
+    this->jsonTree.add_child("queue", queueTree);
 }
 
 void Message::setMsgCameFrom(int _val) {
@@ -171,6 +196,18 @@ void Message::setMsgCameFrom(int _val) {
 
 int Message::getMsgCameFrom() {
     return jsonTree.get<int>("msgCameFrom");
+}
+
+void Message::setQueue(std::vector<int>& _queue) {
+    this->queue = _queue;
+}
+
+void Message::appendQueue(std::vector<int>& _queue) {
+    this->queue.insert(queue.end(), _queue.begin(), _queue.end());
+}
+
+std::vector<int>& Message::getQueue() {
+    return this->queue;
 }
 
 int Message::getDestination() {

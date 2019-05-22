@@ -159,11 +159,6 @@ void Node::dijkstraCalculation(Message& msg) {
     std::vector<int> path;
 
     BOOST_FOREACH(map_def::value_type& v, this->neighbourNodeEndpoints) {
-        // Check if message contains current node as visited
-        std::set<int> vis_arr = msg.getVisitedNodes();
-        int _label = v.first;
-        if(std::find(vis_arr.begin(), vis_arr.end(), _label) != vis_arr.end())
-            continue;
 
         boost::asio::ip::tcp::endpoint _ep(
             boost::asio::ip::address::from_string("127.0.0.1"), v.second);
@@ -236,6 +231,8 @@ void Node::dijkstraCalculation(Message& msg) {
         int end = msg.getDestination();
         path = newPaths.at(end);
         std::cout << "Callback received." << std::endl;
+        msg.appendQueue(incomingMsg.getQueue());
+        msg.updateJsonTree();
     }
     if (msgCameFrom != -1) {
         //////////////////////////////////////////////////////////////////////
@@ -262,7 +259,77 @@ void Node::dijkstraCalculation(Message& msg) {
 
 void Node::dijkstraSession(std::string _data) {
     Message msg(_data);
-    dijkstraCalculation(msg);
+    //////////////////////////////////////////////////////////////////////
+    // FF
+    //////////////////////////////////////////////////////////////////////
+    typedef boost::container::map<int, int> map_def;
+    //////////////////////////////////////////////////////////////////////
+    // Update known nodes
+    std::set<int> to_insert = {this->id};
+    BOOST_FOREACH(map_def::value_type& v, this->neighbourNodes) {
+        to_insert.insert(v.first);
+    }
+    msg.setKnownNodes(to_insert);
+    // Update visited nodes
+    std::set<int> _t = {this->id};
+    msg.setVisitedNodes(_t);
+    // Update tags and paths
+    boost::container::map<int, int> _tags = msg.getTags();
+    boost::container::map<int, std::vector<int>> _paths = msg.getPaths();
+
+    std::set<int> vis_arr = msg.getVisitedNodes();
+
+    std::vector<int> _queue;
+    typedef std::function<bool(std::pair<int, int>, 
+        std::pair<int, int>)> Comparator;
+	Comparator compFunctor =
+        [](std::pair<int, int> elem1, 
+            std::pair<int, int> elem2)
+        {
+            return elem1.second < elem2.second;
+        };
+	std::set<std::pair<int, int>, Comparator> _prepQueue(
+        this->neighbourNodes.begin(), this->neighbourNodes.end(), 
+        compFunctor);
+
+    for (std::pair<int, int> v : _prepQueue) {
+        if(std::find(vis_arr.begin(), vis_arr.end(), v.first) != vis_arr.end())
+            continue;
+        // Check if key exists
+        if (_tags.find(v.first) == _tags.end()) {
+            _tags[v.first] = INT_MAX;
+            _paths[v.first] = std::vector<int>();
+        }
+        if (_tags[this->id] + v.second < _tags[v.first]) {
+            _tags[v.first] = _tags[this->id] + v.second;
+            std::vector<int> _newPath(_paths.at(this->id));
+            _newPath.push_back(v.first);
+            _paths[v.first] = _newPath;
+        }
+        _queue.push_back(v.first);
+    }
+    msg.setTags(_tags);
+    msg.setPaths(_paths);
+    msg.setQueue(_queue);
+    msg.updateJsonTree();
+
+    boost::asio::io_service _service;
+    int msgCameFrom = msg.getMsgCameFrom();
+    msg.setMsgCameFrom(this->id);
+    std::string strToSend = msg.encodeString();
+
+    int _port = this->neighbourNodeEndpoints.at(msgCameFrom) + 1000;
+    boost::asio::ip::tcp::endpoint _ep = boost::asio::ip::tcp::endpoint(
+        boost::asio::ip::address::from_string("127.0.0.1"), _port);
+    boost::asio::ip::tcp::socket _sock = 
+        boost::asio::ip::tcp::socket(_service);
+    _sock.connect(_ep);
+    write(_sock, boost::asio::buffer(strToSend, strToSend.length()));
+
+    //////////////////////////////////////////////////////////////////////
+    // FF
+    //////////////////////////////////////////////////////////////////////
+    // dijkstraCalculation(msg);
 }
 
 Node::~Node() {
